@@ -1,0 +1,187 @@
+<html>
+<head>
+    <title>Bubbles</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .info {
+            background-color: red;
+            color: white;
+            font-size: 24px;
+            padding: 10px 20px;
+            
+            
+        }
+
+        #display {
+            background: #000;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .bubble {
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            background-color: #f00;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+
+        }
+
+        .bubble div {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: #fff;
+            width: 10px;
+            height: 10px;
+            border-radius: 25px;
+
+        }
+        .sbubble {
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            background-color: #f00;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+
+
+
+        }
+
+        .sbubble div {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: #fff;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+        }
+         #effect
+        {
+            position: absolute;
+            left: 200px;
+            top: 200px;
+            width: 50px;
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <audio src="break.mp3" id="sound"></audio>
+    <div class="info">
+        Үе: <span id="level"> </span>
+        Үлдсэн бөмбөлөг: <span id="count"> </span>
+    </div>
+    <div id="display"></div>
+     <span><img id="effect" src="firework.gif"></span>
+    
+    <script>
+        var display = document.getElementById("display");
+        var level = 1;
+        var countSpan = document.getElementById("count");
+        var levelSpan = document.getElementById("level");
+        var sound = document.getElementById('sound');
+         var pop = document.getElementById("effect");
+
+        var move = function () {
+            var bubbles = document.getElementsByClassName("bubble");
+            for (var i = 0; i < bubbles.length; i++) {
+                var left = parseInt(bubbles[i].style.left);
+                var top = parseInt(bubbles[i].style.top);
+                if (left + bubbles[i].moveX > display.clientWidth - 50 || left + bubbles[i].moveX < 0)
+                    bubbles[i].moveX *= -1;
+                
+                if (top + bubbles[i].moveY > display.clientHeight - 50 || top + bubbles[i].moveY < 0)
+                    bubbles[i].moveY *= -1;
+
+                bubbles[i].style.left = left + bubbles[i].moveX;
+                bubbles[i].style.top = top + bubbles[i].moveY;
+
+            }
+        };
+        var beginGame = function () {
+            for (var i = 0; i < 9 + level; i++) {
+                var bubble = document.createElement("div");
+                var light = document.createElement("div");
+                bubble.className = "bubble";
+                bubble.appendChild(light);
+                bubble.style.left = Math.round(Math.random() * (display.clientWidth - 50));
+                bubble.style.top = Math.round(Math.random() * (display.clientHeight - 50));
+                 //random size
+                var h = Math.round(Math.random()*100)+50;
+                bubble.style.width =  h; 
+                bubble.style.height =  h;
+                light.style.left= h/5;
+                light.style.top = h/5;
+                light.style.height=h/4;
+                light.style.width=h/4;
+
+
+                bubble.style.backgroundColor = "rgb(" + Math.round(Math.random() * 256) + 
+                        "," + Math.round(Math.random() * 256) + "," + Math.round(Math.random() * 256) + ")";
+                
+               
+      
+                bubble.moveX = Math.random() * 9 + 1;
+                bubble.moveY = Math.random() * 9 + 1;
+
+                var soundFlag = true;
+                bubble.addEventListener("click", function () {
+                    
+                    pop.style.visibility = "visible";
+                    pop.style.left = this.style.left;
+                    pop.style.top = this.style.top;
+                    pop.style.width = this.clientWidth;
+                    display.removeChild(this);
+                    countSpan.innerHTML = display.childNodes.length;
+
+                        sound.pause();
+                        sound.currentTime = 0;
+                        sound.play();
+                        soundFlag = false;
+
+                    if (display.childNodes.length == 0) {
+                        
+                        pop.style.visibility = "hidden";
+                        clearInterval("move()");
+                        if (confirm("Good job")) {
+                            level++;
+                            beginGame();
+                        }
+                    }
+                    change();
+                });
+                
+                display.appendChild(bubble);
+            }
+            
+
+            setInterval("move()", 50);
+            countSpan.innerHTML = display.childNodes.length;
+            levelSpan.innerHTML = level;
+        };
+        beginGame();
+        
+         function change()
+        {
+            setTimeout(function()
+            { pop.style.visibility = "hidden";}, 1000);
+        }
+
+
+    </script>
+
+</body>
+
+</html>
